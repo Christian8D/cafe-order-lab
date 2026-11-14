@@ -6,6 +6,7 @@ menu_items = (
     ("cappuccino", 5.00),
     ("latte", 4.50),
     ("espresso", 3.00),
+    ("americano", 3.00),
     ("sandwich", 7.50),
 )
 
