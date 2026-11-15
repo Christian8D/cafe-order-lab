@@ -2,22 +2,21 @@
 
 STARTING_STOCK = 10
 
-menu_items = (
-    ("cappuccino", 5.00),
-    ("latte", 4.50),
-    ("espresso", 3.00),
-    ("americano", 3.00),
-    ("sandwich", 7.50),
-)
+menu_items = {
+    "cappuccino": 5.00,
+    "latte": 4.50,
+    "espresso": 3.00,
+    "americano": 3.00,
+    "sandwich": 7.50,
+}
 
-menu = {item: price for item, price in menu_items}
-stock = {item: STARTING_STOCK for item, _price in menu_items}
+stock = {item: STARTING_STOCK for item in menu_items}
 
 
 def show_menu() -> None:
     """Print each item with its number, price, and how many are left."""
     print("Available menu items:")
-    for number, (item, price) in enumerate(menu_items, start=1):
+    for number, (item, price) in enumerate(menu_items.items(), start=1):
         print(f"{number}. {item}: ${price:.2f} ({stock[item]} left)")
 
 
@@ -27,11 +26,12 @@ def read_item_choice() -> str:
     if not raw_choice.isdigit():
         print("Please enter the number next to the item.")
         return ""
+    item_names = list(menu_items)
     item_number = int(raw_choice)
-    if item_number < 1 or item_number > len(menu_items):
+    if item_number < 1 or item_number > len(item_names):
         print("That number is not on the menu.")
         return ""
-    return menu_items[item_number - 1][0]
+    return item_names[item_number - 1]
 
 
 def read_quantity(item_name: str) -> int | None:
@@ -82,7 +82,7 @@ def take_order() -> None:
         quantity = read_quantity(item_name)
         if quantity is None:
             continue
-        line_cost = menu[item_name] * quantity
+        line_cost = menu_items[item_name] * quantity
         stock[item_name] -= quantity
         order_total += line_cost
         lines.append((item_name, quantity, line_cost))
