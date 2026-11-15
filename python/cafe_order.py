@@ -14,6 +14,7 @@ menu_items = {
 # Each item starts with 10 units in stock
 stock = {item: STARTING_STOCK for item in menu_items}
 
+
 def show_menu() -> None:
     """Display menu prices and remaining inventory."""
     print("\nAvailable menu items:")
@@ -31,8 +32,9 @@ def show_menu() -> None:
 
     print("0. Finish order")
 
+
 def read_item_choice() -> str:
-    """Return the selected menu item or an empty string."""
+    """Return a menu item, FINISH, or empty string for invalid input."""
     raw_choice = input("Enter item number: ").strip()
 
     if not raw_choice.isdigit():
@@ -89,6 +91,7 @@ def wants_more_items() -> bool:
 
         print("Please enter 1 for yes or 2 for no.")
 
+
 def take_order() -> None:
     """Take a customer order and update inventory."""
 
@@ -103,7 +106,7 @@ def take_order() -> None:
 
         print("Please enter your name.")
 
-    print(f"\nWelcome to our café, {customer_name}!")
+    print(f"\nWelcome to our cafecito, {customer_name}!")
 
     # Store purchased items and running total
     lines: list[tuple[str, int, float]] = []
@@ -113,40 +116,33 @@ def take_order() -> None:
         show_menu()
 
         item_name = read_item_choice()
-
         if item_name == "":
             continue
-
         if item_name == "FINISH":
             break
-
         if stock[item_name] == 0:
             print(f"Sorry, {item_name} is sold out.")
             continue
-
         quantity = read_quantity(item_name)
-
         if quantity is None:
             continue
 
-        # Arithmetic operator: multiplication
+        # Arithmetic operator (*) multiplies price by quantity
         line_cost = menu_items[item_name] * quantity
 
-        # Assignment operator: subtract purchased stock
+        # Compound assignment (-=) subtracts purchased stock
         stock[item_name] -= quantity
 
-        # Assignment operator: add cost to total
+        # Compound assignment (+=) adds cost to the running total
         order_total += line_cost
 
         # Store the order information
         lines.append((item_name, quantity, line_cost))
-
         print(
             f"\nAdded {quantity} unit(s) of {item_name}. "
             f"Line total: ${line_cost:.2f}. "
             f"{stock[item_name]} left."
         )
-
         if not wants_more_items():
             break
 
@@ -161,14 +157,17 @@ def take_order() -> None:
     print("=" * 35)
     print(f"Customer: {customer_name}")
     print("-" * 35)
+
     for item_name, quantity, line_cost in lines:
         print(
             f"{quantity} x {item_name:<18} "
             f"${line_cost:>6.2f}"
         )
+
     print("-" * 35)
     print(f"TOTAL: ${order_total:.2f}")
     print("=" * 35)
+
 def show_stock() -> None:
     """Display the remaining inventory."""
     print("\nStock on hand:")
@@ -177,7 +176,7 @@ def show_stock() -> None:
         print(f"  {item}: {remaining}")
 
 def main() -> None:
-    """Keep the café register open for multiple customers."""
+    """Keep the cafecito register open for multiple customers."""
     print("=" * 35)
     print("       WELCOME TO OUR CAFÉ")
     print("=" * 35)
@@ -190,9 +189,11 @@ def main() -> None:
     while True:
         take_order()
         show_stock()
+
         another = input(
             "\nServe another customer? (yes/no): "
         ).lower().strip()
+
         if another != "yes":
             print("\nRegister closed. Goodbye!")
             break
