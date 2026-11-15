@@ -22,7 +22,7 @@ def show_menu() -> None:
 
 def read_item_choice() -> str:
     """Return the item for the number entered."""
-    raw_choice = input("Enter item number: ").strip().lower()
+    raw_choice = input("Enter item number: ").strip()
     if not raw_choice.isdigit():
         print("Please enter the number next to the item.")
         return ""
