@@ -1,7 +1,8 @@
-"""Café register: take orders against a starting stock of 10 per item."""
+"""Café register: manage orders and inventory."""
 
 STARTING_STOCK = 10
 
+# Menu items and their prices
 menu_items = {
     "cappuccino": 5.00,
     "latte": 4.50,
@@ -10,116 +11,191 @@ menu_items = {
     "sandwich": 7.50,
 }
 
+# Each item starts with 10 units in stock
 stock = {item: STARTING_STOCK for item in menu_items}
 
-
 def show_menu() -> None:
-    """Print each item with its number, price, and how many are left."""
-    print("Available menu items:")
-    for number, (item, price) in enumerate(menu_items.items(), start=1):
-        print(f"{number}. {item}: ${price:.2f} ({stock[item]} left)")
+    """Display menu prices and remaining inventory."""
+    print("\nAvailable menu items:")
 
+    for number, (item, price) in enumerate(menu_items.items(), start=1):
+        available = stock[item]
+
+        if available == 0:
+            print(f"{number}. {item}: SOLD OUT")
+        else:
+            print(
+                f"{number}. {item}: ${price:.2f} "
+                f"({available} left)"
+            )
+
+    print("0. Finish order")
 
 def read_item_choice() -> str:
-    """Return the item for the number entered."""
+    """Return the selected menu item or an empty string."""
     raw_choice = input("Enter item number: ").strip()
+
     if not raw_choice.isdigit():
-        print("Please enter the number next to the item.")
+        print("Please enter a valid item number.")
         return ""
-    item_names = list(menu_items)
+
     item_number = int(raw_choice)
+
+    if item_number == 0:
+        return "FINISH"
+
+    item_names = list(menu_items)
+
     if item_number < 1 or item_number > len(item_names):
         print("That number is not on the menu.")
         return ""
+
     return item_names[item_number - 1]
 
-
 def read_quantity(item_name: str) -> int | None:
-    """Read a quantity that is a positive whole number and still in stock."""
+    """Read a positive quantity that is available in stock."""
     try:
         quantity = int(input("Enter quantity: "))
     except ValueError:
         print("Please enter a valid whole number.")
         return None
+
     if quantity <= 0:
         print("Please enter a positive quantity.")
         return None
+
     available = stock[item_name]
+
     if quantity > available:
         print(f"Only {available} {item_name}(s) left.")
         return None
+
     return quantity
 
-
 def wants_more_items() -> bool:
-    """Ask whether to add another item. 1 means yes and 2 means no."""
+    """Ask whether the customer wants to order more items."""
     while True:
-        print("Do you want to add more items?")
+        print("\nDo you want to add more items?")
         print("1) Yes")
         print("2) No")
+
         choice = input("Enter your choice: ").strip()
+
         if choice == "1":
             return True
+
         if choice == "2":
             return False
+
         print("Please enter 1 for yes or 2 for no.")
 
-
 def take_order() -> None:
-    """Take one customer's order and reduce stock for each line that sells."""
-    customer_name = input("Enter Customer Name: ").strip()
-    print(f"Welcome to our café, {customer_name}!")
+    """Take a customer order and update inventory."""
+
+    # Customer information
+    while True:
+        customer_name = input(
+            "\nEnter customer name: "
+        ).strip()
+
+        if customer_name:
+            break
+
+        print("Please enter your name.")
+
+    print(f"\nWelcome to our café, {customer_name}!")
+
+    # Store purchased items and running total
     lines: list[tuple[str, int, float]] = []
     order_total = 0.0
+
     while True:
         show_menu()
+
         item_name = read_item_choice()
+
         if item_name == "":
             continue
+
+        if item_name == "FINISH":
+            break
+
         if stock[item_name] == 0:
             print(f"Sorry, {item_name} is sold out.")
             continue
+
         quantity = read_quantity(item_name)
+
         if quantity is None:
             continue
+
+        # Arithmetic operator: multiplication
         line_cost = menu_items[item_name] * quantity
+
+        # Assignment operator: subtract purchased stock
         stock[item_name] -= quantity
+
+        # Assignment operator: add cost to total
         order_total += line_cost
+
+        # Store the order information
         lines.append((item_name, quantity, line_cost))
+
         print(
-            f"Added {quantity} unit(s) of {item_name}. "
-            f"Line total: ${line_cost:.2f}. {stock[item_name]} left."
+            f"\nAdded {quantity} unit(s) of {item_name}. "
+            f"Line total: ${line_cost:.2f}. "
+            f"{stock[item_name]} left."
         )
+
         if not wants_more_items():
             break
+
+    # Handle empty orders
     if not lines:
-        print("No items ordered.")
+        print("\nNo items ordered.")
         return
-    print(f"Receipt for {customer_name}:")
+
+    # Display formatted receipt
+    print("\n" + "=" * 35)
+    print("         CAFÉ RECEIPT")
+    print("=" * 35)
+    print(f"Customer: {customer_name}")
+    print("-" * 35)
     for item_name, quantity, line_cost in lines:
-        print(f"  {quantity} x {item_name}: ${line_cost:.2f}")
-    print(f"Total cost: ${order_total:.2f}")
-
-
+        print(
+            f"{quantity} x {item_name:<18} "
+            f"${line_cost:>6.2f}"
+        )
+    print("-" * 35)
+    print(f"TOTAL: ${order_total:.2f}")
+    print("=" * 35)
 def show_stock() -> None:
-    """Print how many of each item remain."""
-    print("Stock on hand:")
+    """Display the remaining inventory."""
+    print("\nStock on hand:")
+
     for item, remaining in stock.items():
         print(f"  {item}: {remaining}")
 
-
 def main() -> None:
-    """Keep the register open until the cashier closes it."""
-    print("Register open. Every item starts with 10 in stock.")
+    """Keep the café register open for multiple customers."""
+    print("=" * 35)
+    print("       WELCOME TO OUR CAFÉ")
+    print("=" * 35)
+    print(
+        f"Register open. Every item starts "
+        f"with {STARTING_STOCK} in stock."
+    )
+
     show_stock()
     while True:
         take_order()
         show_stock()
-        another = input("Serve another customer? (yes/no): ").lower().strip()
+        another = input(
+            "\nServe another customer? (yes/no): "
+        ).lower().strip()
         if another != "yes":
-            print("Register closed.")
+            print("\nRegister closed. Goodbye!")
             break
-
 
 if __name__ == "__main__":
     main()
