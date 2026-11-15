@@ -233,7 +233,7 @@ export function Playground({ initialCode }: PlaygroundProps) {
     <div className="flex h-full min-h-0 flex-col">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e4d8c8] px-4 py-3 sm:px-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Café Order Lab</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Cafecito Order Lab</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#57534e]">
             The register on the left runs the Python on the right, in your browser. Every item starts with 10 in stock.
           </p>

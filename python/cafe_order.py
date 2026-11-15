@@ -178,7 +178,7 @@ def show_stock() -> None:
 def main() -> None:
     """Keep the cafecito register open for multiple customers."""
     print("=" * 35)
-    print("       WELCOME TO OUR CAFÉ")
+    print("       WELCOME TO OUR CAFECITO")
     print("=" * 35)
     print(
         f"Register open. Every item starts "
